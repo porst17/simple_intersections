@@ -1,8 +1,5 @@
 {
   "name": "simple_intersections",
   "version": "0.0.0",
-  "dependencies": {
-    "threejs": "r82"
-  },
   "private": true
 }
