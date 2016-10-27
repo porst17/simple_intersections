@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>quadric/plane-intersection</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            font-family: Monospace;
+            background-color: #f0f0f0;
+            margin: 0px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="../bower_components/threejs/build/three.min.js"></script>
+    <script src="../bower_components/stats.js/build/stats.min.js"></script>
+    <script id="vertexShader" type="x-shader/x-vertex">
+        void main() {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+    </script>
+    <script id="fragmentShader" type="x-shader/x-fragment">
+        uniform float time;
+        void main() { gl_FragColor = vec4( ( 1.0 + sin( time ) ) / 2.0 ); }
+    </script>
+    <script>
+        var scene, camera, renderer;
+        var geometry, material, mesh;
+        var uniforms;
+
+        init();
+        animate();
+
+        function init() {
+
+            scene = new THREE.Scene();
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.z = 1000;
+
+            geometry = new THREE.BoxGeometry(200, 200, 200);
+
+            uniforms = {
+                time: {
+                    value: 1.0
+                }
+            };
+            material = new THREE.ShaderMaterial({
+                uniforms: uniforms,
+                vertexShader: document.getElementById('vertexShader').textContent,
+                fragmentShader: document.getElementById('fragmentShader').textContent
+            });
+
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            document.body.appendChild(renderer.domElement);
+
+            stats = new Stats();
+            document.body.appendChild(stats.dom);
+        }
+
+        function animate() {
+
+            requestAnimationFrame(animate);
+
+            mesh.rotation.x += 0.01;
+            mesh.rotation.y += 0.02;
+
+            uniforms.time.value += 0.1;
+
+            renderer.render(scene, camera);
+            stats.update();
+
+        }
+    </script>
+</body>
+
+</html>
